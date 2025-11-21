@@ -1,4 +1,6 @@
-import { createSignal, type Signal } from "solid-js";
+/** biome-ignore-all lint/a11y/useButtonType: <explanation> */
+/** biome-ignore-all lint/a11y/noSvgWithoutTitle: <explanation> */
+import { createSignal, Show, type Signal } from "solid-js";
 
 type Digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9";
 type TimeString = `${Digit}${Digit}:${Digit}${Digit}`;
@@ -34,23 +36,70 @@ function Section({
     setFraction(getFraction(60, value));
   }
 
+  let input: HTMLInputElement | undefined;
+
   return (
-    <section>
+    <section class="flex">
       <label for={`time-${index}`}>
         <span>1 unit every </span>
-        <input
-          type="time"
-          id={`time-${index}`}
-          name={`time-${index}`}
-          onChange={handleChange}
-          value="01:00"
-          step={30 * 60}
-          class="border-stone-400 p-1 border rounded-lg"
-        />
-        <span> minutes</span>
       </label>
-      <span> are </span>
-      <output>
+      <input
+        type="time"
+        id={`time-${index}`}
+        name={`time-${index}`}
+        onChange={handleChange}
+        value="01:00"
+        step={30 * 60}
+        ref={input}
+        class="border-stone-400 p-2 border rounded-s-lg h-12 ml-[1ch]"
+      />
+      <Show when={input?.stepUp}>
+        <button
+          onClick={() => input?.stepUp()}
+          class="border-stone-400 p-2 border size-12 justify-items-center"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="block"
+          >
+            <path d="M5 12h14" />
+            <path d="M12 5v14" />
+          </svg>
+          <span class="sr-only">Increase</span>
+        </button>
+      </Show>
+      <Show when={input?.stepDown}>
+        <button
+          onClick={() => input?.stepDown()}
+          class="border-stone-400 p-2 border size-12 rounded-e-lg justify-items-center"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="block"
+          >
+            <path d="M5 12h14" />
+          </svg>
+          <span class="sr-only">Decrease</span>
+        </button>
+      </Show>
+      <span class="ml-[1ch]">minutes are</span>
+      <output class="ml-[1ch]">
         <math>
           <mfrac>
             <mn class="font-sans">{fraction().numerator}</mn>
@@ -58,7 +107,7 @@ function Section({
           </mfrac>
         </math>
       </output>
-      <span> units per minute</span>
+      <span class="ml-[1ch]">units per minute</span>
     </section>
   );
 }
