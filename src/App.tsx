@@ -1,4 +1,4 @@
-import { createSignal, untrack, type Signal } from "solid-js";
+import { createSignal, type Signal } from "solid-js";
 
 type Digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9";
 type TimeString = `${Digit}${Digit}:${Digit}${Digit}`;
@@ -18,17 +18,6 @@ function getFraction(numerator: number, denominator: number): Fraction {
     numerator: numerator / commonDivisor,
     denominator: denominator / commonDivisor,
   };
-}
-
-function getRatio(
-  minutes1: number,
-  seconds1: number,
-  minutes2: number,
-  seconds2: number,
-): number {
-  const totalSeconds1 = minutes1 * 60 + seconds1;
-  const totalSeconds2 = minutes2 * 60 + seconds2;
-  return totalSeconds1 / totalSeconds2;
 }
 
 function Section({
@@ -89,11 +78,6 @@ export default function App() {
 
   const [fraction1, setFraction1] = createSignal<Fraction>(getFraction(60, 60));
   const [fraction2, setFraction2] = createSignal<Fraction>(getFraction(60, 60));
-
-  function getLowestCommonMultiple(a: number, b: number): number {
-    const gcd = (x: number, y: number): number => (y === 0 ? x : gcd(y, x % y));
-    return (a * b) / gcd(a, b);
-  }
 
   const fractionRatio = () => getFractionRatio(fraction1(), fraction2());
 
