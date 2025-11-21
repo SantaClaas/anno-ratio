@@ -32,14 +32,19 @@ function Section({
   function handleChange(event: Event) {
     if (!(event.target instanceof HTMLInputElement))
       throw new Error("Target is expected to be an HTMLInputElement");
-    const value = parseTimeToSeconds(event.target.value as TimeString);
-    setFraction(getFraction(60, value));
+
+    set(event.target.value as TimeString);
+  }
+
+  function set(value: TimeString) {
+    const demoninator = parseTimeToSeconds(value);
+    setFraction(getFraction(60, demoninator));
   }
 
   let input: HTMLInputElement | undefined;
 
   return (
-    <section class="flex">
+    <section class="flex items-center">
       <label for={`time-${index}`}>
         <span>1 unit every </span>
       </label>
@@ -51,12 +56,16 @@ function Section({
         value="01:00"
         step={30 * 60}
         ref={input}
+        onInput={() => console.debug("test")}
         class="border-stone-400 p-2 border rounded-s-lg h-12 ml-[1ch]"
       />
       <Show when={input?.stepUp}>
         <button
-          onClick={() => input?.stepUp()}
-          class="border-stone-400 p-2 border size-12 justify-items-center"
+          onClick={() => {
+            input?.stepUp();
+            input?.dispatchEvent(new Event("change"));
+          }}
+          class="border-stone-400 p-2 border size-12 justify-items-center touch-manipulation"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -78,8 +87,11 @@ function Section({
       </Show>
       <Show when={input?.stepDown}>
         <button
-          onClick={() => input?.stepDown()}
-          class="border-stone-400 p-2 border size-12 rounded-e-lg justify-items-center"
+          onClick={() => {
+            input?.stepDown();
+            input?.dispatchEvent(new Event("change"));
+          }}
+          class="border-stone-400 p-2 border size-12 rounded-e-lg justify-items-center touch-manipulation"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -131,7 +143,7 @@ export default function App() {
   const fractionRatio = () => getFractionRatio(fraction1(), fraction2());
 
   return (
-    <main class="content-center accent-emerald-300 justify-items-center h-dvh text-3xl space-y-4 font-semibold text-emerald-300">
+    <main class="content-center accent-emerald-300 justify-items-center h-dvh text-lg space-y-4 font-semibold text-emerald-300">
       <h2>Building 1</h2>
       <Section index={1} fraction={[fraction1, setFraction1]} />
       <h2>Building 2</h2>
